@@ -1,0 +1,4 @@
+# https://github.com/jekyll/minima/blob/master/_config.yml
+remote_theme: jekyll/minima
+minima:
+  skin: auto
