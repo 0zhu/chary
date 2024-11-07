@@ -1,0 +1,128 @@
+# # Default values
+
+# nameOverride: ""  # specify custom chart name
+# fullnameOverride: ""  # or overwrite completely (no release prefix)
+# image:
+#   repository: nginx
+#   tag: alpine
+
+# # Declare manifests using list
+
+# manifests:
+
+# # Chart can generate basic manifests for some kinds
+
+# - kind: Deployment  # enough to generate basic manifest
+#   apiVersion: apps/v1
+#   metadata:
+#     labels: {}
+#       # {{- include "chary.labels" . | nindent 4 }}
+#     name: '{{ include "chary.fullname" . }}'
+#     namespace: '{{ .Release.Namespace }}'
+#   spec:
+#     selector:
+#       matchLabels: {}
+#         # {{- include "chary.selectorLabels" . | nindent 6 }}
+#     template:
+#       metadata:
+#         labels: {}
+#           # {{- include "chary.labels" . | nindent 8 }}
+#       spec:
+#         containers:
+#         - image: '{{ $.Values.image.repository }}:{{ default $.Values.image.tag $.Chart.AppVersion }}'
+#           name: '{{ include "chary.name" $ }}'
+#   # add any other required fields:
+#   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#deployment-v1-apps
+
+# - kind: StatefulSet  # enough to generate basic manifest, same as deployment
+#   # add any other required fields:
+#   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#statefulset-v1-apps
+
+# - kind: Service  # enough to generate basic manifest
+#   apiVersion: v1
+#   metadata:
+#     labels: {}
+#       # {{- include "chary.labels" . | nindent 4 }}
+#     name: '{{ include "chary.fullname" . }}'
+#     namespace: '{{ .Release.Namespace }}'
+#   spec:
+#     ports:
+#     - port: 80
+#     selector: {}
+#       # {{- include "chary.selectorLabels" . | nindent 4 }}
+#   # add any other required fields:
+#   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#service-v1-core
+
+# - kind: Ingress  # enough to generate basic manifest
+#   apiVersion: networking.k8s.io/v1
+#   metadata:
+#     labels: {}
+#       # {{- include "chary.labels" . | nindent 4 }}
+#     name: '{{ include "chary.fullname" . }}'
+#     namespace: '{{ .Release.Namespace }}'
+#   spec:
+#     rules:
+#     - host: '{{ include "chary.fullname" . }}.local'
+#       http:
+#         paths:
+#         - backend:
+#             service:
+#               name: '{{ include "chary.fullname" . }}'
+#               port:
+#                 number: 80
+#           path: /
+#           pathType: ImplementationSpecific
+#   # add any other required fields:
+#   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#service-v1-core
+
+# # For other kinds you can still declare custom manifests
+# # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/
+# # they will have default fields:
+# # apiVersion, .metadata.labels, .metadata.name, .metadata.namespace,
+# # so you will need to define only your custom specs or overwrite defaults:
+
+# - kind: Namespace
+#   metadata:
+#     name: myns
+
+# - apiVersion: monitoring.coreos.com/v1
+#   kind: ServiceMonitor
+#   spec:
+#     selector:
+#       matchLabels:
+#         app.kubernetes.io/name: '{{ include "chary.name" . }}'
+#         app.kubernetes.io/instance: '{{ .Release.Name }}'
+#     endpoints:
+#     - port: 80
+
+
+# # Declare manifests using dict if it'd be more convenient for templating,
+# # e.g. reference .Values.manifests.svc.kind in dict vs. .Values.manifests[0].kind in list
+
+# manifests:
+#   deploy:
+#     kind: Deployment
+#     # ...
+#   svc:
+#     kind: Service
+#     # ...
+
+# # Declare manifests using strings should you need an advanced templating not available in yaml
+# manifests:
+#   - |
+#     kind: Deployment
+#     metadata:
+#       labels:
+#         {{- include "chary.labels" . | nindent 4 }}
+# manifests:
+#   deploy: |
+#     kind: Deployment
+#     metadata:
+#       labels:
+#         {{- include "chary.labels" . | nindent 4 }}
+
+# # .yaml templates placed into manifests/ folder will also be processed as if they are manifests: strings
+
+# # Customize NOTES.txt
+# notes: |
+#   Thank you for installing {{ .Release.Name }}

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: chary
+version: 0.1.0
+home: https://github.com/0zhu/chary

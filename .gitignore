@@ -1,0 +1,5 @@
+_site/
+test/
+.DS_Store
+*.tgz
+Gemfile*
